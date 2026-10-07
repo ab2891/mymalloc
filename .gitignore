@@ -1,0 +1,12 @@
+# Compiler outputs
+*.o
+memgrind
+memtest
+memtest-leak
+correctness
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+*~

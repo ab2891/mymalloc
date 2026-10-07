@@ -1,0 +1,45 @@
+CS 214 -- Project I: My little malloc()
+Authors:
+    Agustin Blaumann -- ab3211
+    Subhashis Srivastava -- ss4694
+
+BUILD AND RUN
+
+    make            Build the programs.
+    ./memgrind      Run the stress workload.
+    make test       Run all tests.
+    make clean      Remove build files.
+
+FILES AND PROGRAMS
+
+mymalloc.c implements the allocator using mymalloc.h. memtest checks payload
+contents; memtest-leak checks leak reporting. correctness tests allocation and
+error handling; check.sh checks diagnostics and exit statuses. These programs
+need no arguments except correctness, whose optional mode is valid (default),
+bounds, exhaustion, fragmentation, stack, interior, header, double,
+coalesced-double, null, leak, or padded-leak.
+
+DESIGN
+
+A 4096-byte heap stores eight-byte headers and aligned payloads. Allocation uses
+first fit and splits blocks; freeing merges adjacent free blocks. Initialization
+is automatic. Failed allocations return NULL with a diagnostic; invalid frees
+exit with status 2. An exit handler reports leaked payload bytes and objects.
+malloc(0) fails, and free(NULL) is treated as invalid.
+
+STRESS WORKLOAD
+
+memgrind times 50 repetitions of the three required tasks plus alternating-hole
+reuse and random mixed-size replacement. Every task frees its objects.
+
+TEST PLAN
+
+Check alignment and distinct byte patterns for overlap or corruption, reallocate
+freed space to check reuse and coalescing, and verify full-heap recovery. Test
+10,000 random operations, failed allocations, invalid frees, and exact leak
+counts. Compare error messages, source locations, and exit statuses.
+
+VERIFICATION
+
+All tests passed on iLab2 with GCC 13.3 and locally with address and undefined
+behavior sanitizers. p1.tar contains the clean P1 submission directory.
